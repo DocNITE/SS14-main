@@ -1,0 +1,41 @@
+- type: jobWhitelist
+  id: HoS_WL
+  job: HeadOfSecurity
+  species:
+  - Human
+  - Diona
+
+- type: jobWhitelist
+  id: RD_WL
+  job: ResearchDirector
+  species:
+  - Human
+  - Diona
+
+- type: jobWhitelist
+  id: CMO_WL
+  job: ChiefMedicalOfficer
+  species:
+  - Human
+  - Diona
+
+- type: jobWhitelist
+  id: CE_WL
+  job: ChiefEngineer
+  species:
+  - Human
+  - Diona
+
+- type: jobWhitelist
+  id: HoP_WL
+  job: HeadOfPersonnel
+  species:
+  - Human
+  - Diona
+
+- type: jobWhitelist
+  id: CP_WL
+  job: Captain
+  species:
+  - Human
+  - Diona

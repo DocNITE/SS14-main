@@ -1555,5 +1555,15 @@ namespace Content.Shared.CCVar
         /// </summary>
         public static readonly CVarDef<bool> ConfigPresetDebug =
             CVarDef.Create("config.preset_debug", true, CVar.SERVERONLY);
+
+        /*
+         * SPAWN
+         */
+
+        /// <summary>
+        /// Enable playing command roles with only one species
+        /// </summary>
+        public static readonly CVarDef<bool> SpawnJobWhitelist =
+            CVarDef.Create("spawn.job_whitelist", false, CVar.SERVER);
     }
 }

@@ -138,6 +138,49 @@ public sealed class StationSpawningSystem : EntitySystem
             profile = HumanoidCharacterProfile.RandomWithSpecies(speciesId);
         }
 
+        // JobWhitelist-Edit-Start
+        var isWhitelist = _configurationManager.GetCVar<bool>(CCVars.SpawnJobWhitelist);
+        if(isWhitelist && job != null)
+        {
+            bool getSpecies(IReadOnlyCollection<string> list)
+            {
+                foreach (var sName in list)
+                {
+                    if (sName == speciesId)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            bool getJobWhitelist(out JobWhitelistPrototype? proto)
+            {
+                foreach (var item in _prototypeManager.EnumeratePrototypes<JobWhitelistPrototype>())
+                {
+                    if (item.Job == job.Prototype.ID)
+                    {
+                        proto = item;
+                        return true;
+                    }
+                }
+                proto = null;
+                return false;
+            }
+
+            if (getJobWhitelist(out var proto) && proto != null)
+            {
+                //TODO: Change character if out not good
+                if (!getSpecies(proto.Species))
+                {
+                    // If player doesn't have correctly species, so,
+                    // we generate with default species 'human'
+                    profile = HumanoidCharacterProfile.RandomWithSpecies();
+                }
+            }
+        }
+        // JobWhitelist-Edit-End
+
         if (job?.StartingGear != null)
         {
             var startingGear = _prototypeManager.Index<StartingGearPrototype>(job.StartingGear);
