@@ -165,6 +165,76 @@ namespace Content.Server.GameTicking
                 return;
             }
 
+            // JobWhitelist-Edit-Start
+            // So, we make all our custom code there beetween marks 'Start' & 'End'
+            var _preferenceMan = IoCManager.Resolve<Preferences.Managers.IServerPreferencesManager>().GetPreferences(player.UserId);
+            var isWhitelist = _configurationManager.GetCVar<bool>(Shared.CCVar.CCVars.SpawnJobWhitelist);
+            if(isWhitelist && jobId != null)
+            {
+                bool TryGetSpecies(IReadOnlyCollection<string> list, HumanoidCharacterProfile pChar)
+                {
+                    foreach (var sName in list)
+                    {
+                        if (sName == pChar.Species)
+                        {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
+                bool TryGetWhitelist(out JobWhitelistPrototype? proto)
+                {
+                    foreach (var item in _prototypeManager.EnumeratePrototypes<JobWhitelistPrototype>())
+                    {
+                        if (item.Job == jobId)
+                        {
+                            proto = item;
+                            return true;
+                        }
+                    }
+                    proto = null;
+                    return false;
+                }
+
+                bool TryGetCorrectPofile(JobWhitelistPrototype proto, out HumanoidCharacterProfile? value)
+                {
+                    if (_preferenceMan != null)
+                    {
+                        for(int i = 0; i < _preferenceMan.Characters.Count; i++)
+                        {
+                            var profile = (HumanoidCharacterProfile)_preferenceMan.GetProfile(i);
+                            if (TryGetSpecies(proto.Species, profile))
+                            {
+                                value = profile;
+                                return true;
+                            }
+                        }
+                    }
+                    value = null;
+                    return false;
+                }
+
+                if (TryGetWhitelist(out var proto) && proto != null)
+                {
+                    if (!TryGetSpecies(proto.Species, character))
+                    {
+                        // Try to use exist profile
+                        // If player doesn't have correctly species, so,
+                        // we generate with default species 'human'
+                        if (TryGetCorrectPofile(proto, out var profile) && profile != null)
+                            character = profile;
+                        else
+                            character = HumanoidCharacterProfile.RandomWithSpecies();
+                        // Send info, if our character was changed
+                        _chatManager.DispatchServerMessage(player, Loc.GetString("job-whitelist-spawn-wrong"));
+                    }
+                }
+            }
+
+            if (jobId == null) return;
+            // JobWhitelist-Edit-End
+
             PlayerJoinGame(player);
 
             var data = player.ContentData();
