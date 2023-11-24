@@ -2280,6 +2280,7 @@
     attributes:
       gender: epicene
 
+# lbase_cat
 - type: entity
   name: cat
   parent: SimpleMobBase
